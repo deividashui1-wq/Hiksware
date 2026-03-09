@@ -1,88 +1,113 @@
 local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
-if CoreGui:FindFirstChild("Hiksware_UI") then CoreGui.Hiksware_UI:Destroy() end
+if CoreGui:FindFirstChild("Hiksware_V2") then CoreGui.Hiksware_V2:Destroy() end
 
 local Screen = Instance.new("ScreenGui", CoreGui)
-Screen.Name = "Hiksware_UI"
+Screen.Name = "Hiksware_V2"
 
+-- Главное окно
 local Main = Instance.new("Frame", Screen)
-Main.Size = UDim2.new(0, 500, 0, 350)
-Main.Position = UDim2.new(0.5, -250, 0.5, -175)
-Main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Main.Size = UDim2.new(0, 450, 0, 300)
+Main.Position = UDim2.new(0.5, -225, 0.5, -150)
+Main.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Main.BorderSizePixel = 0
-Main.Active = true
-Main.Draggable = true
+Main.ClipsDescendants = true
+local MainCorner = Instance.new("UICorner", Main)
+MainCorner.CornerRadius = UDim.new(0, 12)
 
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 8)
+-- Красивая полоска сверху (Градиент)
+local TopBar = Instance.new("Frame", Main)
+TopBar.Size = UDim2.new(1, 0, 0, 3)
+TopBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TopBar.BorderSizePixel = 0
+local Gradient = Instance.new("UIGradient", TopBar)
+Gradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 170, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(170, 0, 255))
+})
 
--- Боковая панель
-local Sidebar = Instance.new("Frame", Main)
-Sidebar.Size = UDim2.new(0, 130, 1, 0)
-Sidebar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Sidebar.BorderSizePixel = 0
-Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 8)
+-- Заголовок
+local Title = Instance.new("TextLabel", Main)
+Title.Text = "H I K S W A R E"
+Title.Position = UDim2.new(0, 20, 0, 15)
+Title.Size = UDim2.new(0, 100, 0, 30)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.BackgroundTransparency = 1
+Title.TextXAlignment = Enum.TextXAlignment.Left
 
-local Logo = Instance.new("TextLabel", Sidebar)
-Logo.Size = UDim2.new(1, 0, 0, 50)
-Logo.Text = "HIK S W A R E"
-Logo.TextColor3 = Color3.fromRGB(0, 170, 255)
-Logo.Font = Enum.Font.SourceSansBold
-Logo.TextSize = 20
-Logo.BackgroundTransparency = 1
+-- Сетка для модулей
+local ModuleList = Instance.new("ScrollingFrame", Main)
+ModuleList.Position = UDim2.new(0, 15, 0, 60)
+ModuleList.Size = UDim2.new(1, -30, 1, -80)
+ModuleList.BackgroundTransparency = 1
+ModuleList.CanvasSize = UDim2.new(0, 0, 2, 0)
+ModuleList.ScrollBarThickness = 2
 
-local TabButtons = Instance.new("Frame", Sidebar)
-TabButtons.Position = UDim2.new(0, 0, 0, 60)
-TabButtons.Size = UDim2.new(1, 0, 1, -60)
-TabButtons.BackgroundTransparency = 1
-local Layout = Instance.new("UIListLayout", TabButtons)
-Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-Layout.Padding = UDim.new(0, 5)
+local Layout = Instance.new("UIGridLayout", ModuleList)
+Layout.CellSize = UDim2.new(0, 130, 0, 40)
+Layout.CellPadding = UDim2.new(0, 10, 0, 10)
 
--- Контейнер для страниц
-local Pages = Instance.new("Frame", Main)
-Pages.Position = UDim2.new(0, 140, 0, 10)
-Pages.Size = UDim2.new(1, -150, 1, -20)
-Pages.BackgroundTransparency = 1
-
-local function CreatePage(name)
-    local Page = Instance.new("Frame", Pages)
-    Page.Size = UDim2.new(1, 0, 1, 0)
-    Page.BackgroundTransparency = 1
-    Page.Visible = false
+-- Функция создания модуля
+local function AddModule(name, callback)
+    local Btn = Instance.new("TextButton", ModuleList)
+    Btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    Btn.Text = name
+    Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+    Btn.Font = Enum.Font.Gotham
+    Btn.TextSize = 14
+    local btnCorner = Instance.new("UICorner", Btn)
+    btnCorner.CornerRadius = UDim.new(0, 6)
     
-    local TabBtn = Instance.new("TextButton", TabButtons)
-    TabBtn.Size = UDim2.new(0, 110, 0, 30)
-    TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    TabBtn.Text = name
-    TabBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-    TabBtn.Font = Enum.Font.SourceSans
-    Instance.new("UICorner", TabBtn)
-    
-    TabBtn.MouseButton1Click:Connect(function()
-        for _, p in pairs(Pages:GetChildren()) do p.Visible = false end
-        Page.Visible = true
+    local enabled = false
+    Btn.MouseButton1Click:Connect(function()
+        enabled = not enabled
+        if enabled then
+            TweenService:Create(Btn, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(0, 120, 255), TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+        else
+            TweenService:Create(Btn, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(20, 20, 20), TextColor3 = Color3.fromRGB(180, 180, 180)}):Play()
+        end
+        callback(enabled)
     end)
-    
-    return Page
 end
 
--- Создаем страницы
-local CombatPage = CreatePage("Combat")
-local VisualsPage = CreatePage("Visuals")
-CombatPage.Visible = true -- Первая страница открыта сразу
-
--- Тестовая кнопка на странице Combat
-local TestBtn = Instance.new("TextButton", CombatPage)
-TestBtn.Size = UDim2.new(0, 150, 0, 40)
-TestBtn.Text = "Silent Aim: OFF"
-TestBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-TestBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Instance.new("UICorner", TestBtn)
-
--- Скрытие на Insert
-UserInputService.InputBegan:Connect(function(i)
-    if i.KeyCode == Enum.KeyCode.Insert then Main.Visible = not Main.Visible end
+-- Добавляем функции
+AddModule("Silent Aim", function(state)
+    _G.HikswareSettings.SilentAim = state
+    print("Silent Aim:", state)
 end)
 
-print("Hiksware Menu Updated!")
+AddModule("ESP Boxes", function(state)
+    _G.HikswareSettings.ESP = state
+    print("ESP:", state)
+end)
+
+AddModule("Fly Hack", function(state)
+    print("Fly:", state)
+end)
+
+-- Плавное появление
+Main.GroupTransparency = 1
+TweenService:Create(Main, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -225, 0.5, -150)}):Play()
+
+-- Драг (перетаскивание)
+local dragging, dragInput, dragStart, startPos
+Main.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = Main.Position
+    end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+end)
