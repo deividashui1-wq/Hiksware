@@ -7,91 +7,120 @@ if CoreGui:FindFirstChild("Hiksware_V2") then CoreGui.Hiksware_V2:Destroy() end
 local Screen = Instance.new("ScreenGui", CoreGui)
 Screen.Name = "Hiksware_V2"
 
--- Главное окно
+-- Главное окно (Увеличенное)
 local Main = Instance.new("Frame", Screen)
-Main.Size = UDim2.new(0, 450, 0, 300)
-Main.Position = UDim2.new(0.5, -225, 0.5, -150)
-Main.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Main.Size = UDim2.new(0, 600, 0, 450)
+Main.Position = UDim2.new(0.5, -300, 0.5, -225)
+Main.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
 Main.BorderSizePixel = 0
-Main.ClipsDescendants = true
 local MainCorner = Instance.new("UICorner", Main)
-MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.CornerRadius = UDim.new(0, 10)
 
--- Красивая полоска сверху (Градиент)
-local TopBar = Instance.new("Frame", Main)
-TopBar.Size = UDim2.new(1, 0, 0, 3)
-TopBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TopBar.BorderSizePixel = 0
-local Gradient = Instance.new("UIGradient", TopBar)
-Gradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 170, 255)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(170, 0, 255))
-})
+-- Верхняя панель (Header)
+local Header = Instance.new("Frame", Main)
+Header.Size = UDim2.new(1, 0, 0, 50)
+Header.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+Header.BorderSizePixel = 0
+local HeaderCorner = Instance.new("UICorner", Header)
 
--- Заголовок
-local Title = Instance.new("TextLabel", Main)
-Title.Text = "H I K S W A R E"
-Title.Position = UDim2.new(0, 20, 0, 15)
-Title.Size = UDim2.new(0, 100, 0, 30)
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+local Title = Instance.new("TextLabel", Header)
+Title.Text = "HIKSWARE"
+Title.Position = UDim2.new(0, 20, 0, 0)
+Title.Size = UDim2.new(0, 100, 1, 0)
+Title.TextColor3 = Color3.fromRGB(0, 170, 255)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 18
+Title.TextSize = 20
 Title.BackgroundTransparency = 1
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Сетка для модулей
-local ModuleList = Instance.new("ScrollingFrame", Main)
-ModuleList.Position = UDim2.new(0, 15, 0, 60)
-ModuleList.Size = UDim2.new(1, -30, 1, -80)
-ModuleList.BackgroundTransparency = 1
-ModuleList.CanvasSize = UDim2.new(0, 0, 2, 0)
-ModuleList.ScrollBarThickness = 2
+-- Контейнер для вкладок сверху
+local TabBar = Instance.new("Frame", Header)
+TabBar.Position = UDim2.new(0, 150, 0, 0)
+TabBar.Size = UDim2.new(1, -160, 1, 0)
+TabBar.BackgroundTransparency = 1
+local TabLayout = Instance.new("UIListLayout", TabBar)
+TabLayout.FillDirection = Enum.FillDirection.Horizontal
+TabLayout.Padding = UDim.new(0, 10)
+TabLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
-local Layout = Instance.new("UIGridLayout", ModuleList)
-Layout.CellSize = UDim2.new(0, 130, 0, 40)
-Layout.CellPadding = UDim2.new(0, 10, 0, 10)
+-- Контейнер для страниц
+local Pages = Instance.new("Frame", Main)
+Pages.Position = UDim2.new(0, 20, 0, 70)
+Pages.Size = UDim2.new(1, -40, 1, -90)
+Pages.BackgroundTransparency = 1
 
--- Функция создания модуля
-local function AddModule(name, callback)
-    local Btn = Instance.new("TextButton", ModuleList)
-    Btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+local function CreatePage(name)
+    local Page = Instance.new("ScrollingFrame", Pages)
+    Page.Size = UDim2.new(1, 0, 1, 0)
+    Page.BackgroundTransparency = 1
+    Page.Visible = false
+    Page.ScrollBarThickness = 2
+    Page.CanvasSize = UDim2.new(0,0,2,0)
+    
+    local PageLayout = Instance.new("UIGridLayout", Page)
+    PageLayout.CellSize = UDim2.new(0, 170, 0, 45)
+    PageLayout.CellPadding = UDim2.new(0, 15, 0, 15)
+
+    local TabBtn = Instance.new("TextButton", TabBar)
+    TabBtn.Size = UDim2.new(0, 90, 0, 30)
+    TabBtn.BackgroundTransparency = 1
+    TabBtn.Text = name
+    TabBtn.TextColor3 = Color3.fromRGB(150, 150, 150)
+    TabBtn.Font = Enum.Font.Gotham
+    TabBtn.TextSize = 14
+
+    TabBtn.MouseButton1Click:Connect(function()
+        for _, p in pairs(Pages:GetChildren()) do p.Visible = false end
+        for _, b in pairs(TabBar:GetChildren()) do 
+            if b:IsA("TextButton") then b.TextColor3 = Color3.fromRGB(150, 150, 150) end 
+        end
+        Page.Visible = true
+        TabBtn.TextColor3 = Color3.fromRGB(0, 170, 255)
+    end)
+
+    return Page
+end
+
+-- Создаем страницы
+local CombatPage = CreatePage("Combat")
+local VisualsPage = CreatePage("Visuals")
+local MiscPage = CreatePage("Misc")
+CombatPage.Visible = true
+
+-- Функция добавления модуля
+local function AddModule(parent, name, callback)
+    local Btn = Instance.new("TextButton", parent)
+    Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     Btn.Text = name
-    Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+    Btn.TextColor3 = Color3.fromRGB(200, 200, 200)
     Btn.Font = Enum.Font.Gotham
     Btn.TextSize = 14
-    local btnCorner = Instance.new("UICorner", Btn)
-    btnCorner.CornerRadius = UDim.new(0, 6)
-    
+    Instance.new("UICorner", Btn)
+
     local enabled = false
     Btn.MouseButton1Click:Connect(function()
         enabled = not enabled
-        if enabled then
-            TweenService:Create(Btn, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(0, 120, 255), TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
-        else
-            TweenService:Create(Btn, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(20, 20, 20), TextColor3 = Color3.fromRGB(180, 180, 180)}):Play()
-        end
         callback(enabled)
+        if enabled then
+            Btn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+            Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        else
+            Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+            Btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+        end
     end)
 end
 
--- Добавляем функции
-AddModule("Silent Aim", function(state)
-    _G.HikswareSettings.SilentAim = state
-    print("Silent Aim:", state)
-end)
+-- Наполняем модулями
+AddModule(CombatPage, "Silent Aim", function(v) _G.HikswareSettings.SilentAim = v end)
+AddModule(CombatPage, "Trigger Bot", function(v) print("Trigger:", v) end)
 
-AddModule("ESP Boxes", function(state)
-    _G.HikswareSettings.ESP = state
-    print("ESP:", state)
-end)
+AddModule(VisualsPage, "Box ESP", function(v) _G.HikswareSettings.ESP = v end)
+AddModule(VisualsPage, "Tracers", function(v) print("Tracers:", v) end)
 
-AddModule("Fly Hack", function(state)
-    print("Fly:", state)
+AddModule(MiscPage, "Speed Hack", function(v) 
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v and 50 or 16 
 end)
-
--- Плавное появление
-Main.GroupTransparency = 1
-TweenService:Create(Main, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -225, 0.5, -150)}):Play()
 
 -- Драг (перетаскивание)
 local dragging, dragInput, dragStart, startPos
