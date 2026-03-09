@@ -7,46 +7,52 @@ if CoreGui:FindFirstChild("Hiksware_V2") then CoreGui.Hiksware_V2:Destroy() end
 local Screen = Instance.new("ScreenGui", CoreGui)
 Screen.Name = "Hiksware_V2"
 
--- Главное окно (Увеличенное)
+-- Настройки (чтобы не было ошибок при клике)
+_G.HikswareSettings = _G.HikswareSettings or {
+    SilentAim = false,
+    ESP = false
+}
+
+-- Главное окно
 local Main = Instance.new("Frame", Screen)
 Main.Size = UDim2.new(0, 600, 0, 450)
 Main.Position = UDim2.new(0.5, -300, 0.5, -225)
-Main.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
+Main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 Main.BorderSizePixel = 0
-local MainCorner = Instance.new("UICorner", Main)
-MainCorner.CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
 
 -- Верхняя панель (Header)
 local Header = Instance.new("Frame", Main)
-Header.Size = UDim2.new(1, 0, 0, 50)
-Header.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+Header.Size = UDim2.new(1, 0, 0, 60)
+Header.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 Header.BorderSizePixel = 0
 local HeaderCorner = Instance.new("UICorner", Header)
 
 local Title = Instance.new("TextLabel", Header)
 Title.Text = "HIKSWARE"
 Title.Position = UDim2.new(0, 20, 0, 0)
-Title.Size = UDim2.new(0, 100, 1, 0)
+Title.Size = UDim2.new(0, 120, 1, 0)
 Title.TextColor3 = Color3.fromRGB(0, 170, 255)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 20
+Title.TextSize = 22
 Title.BackgroundTransparency = 1
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Контейнер для вкладок сверху
-local TabBar = Instance.new("Frame", Header)
-TabBar.Position = UDim2.new(0, 150, 0, 0)
-TabBar.Size = UDim2.new(1, -160, 1, 0)
-TabBar.BackgroundTransparency = 1
-local TabLayout = Instance.new("UIListLayout", TabBar)
+-- КНОПКИ ВКЛАДОК (Теперь они будут видны!)
+local TabButtonsContainer = Instance.new("Frame", Header)
+TabButtonsContainer.Position = UDim2.new(0, 160, 0, 10)
+TabButtonsContainer.Size = UDim2.new(1, -170, 0, 40)
+TabButtonsContainer.BackgroundTransparency = 1
+
+local TabLayout = Instance.new("UIListLayout", TabButtonsContainer)
 TabLayout.FillDirection = Enum.FillDirection.Horizontal
 TabLayout.Padding = UDim.new(0, 10)
 TabLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
 -- Контейнер для страниц
 local Pages = Instance.new("Frame", Main)
-Pages.Position = UDim2.new(0, 20, 0, 70)
-Pages.Size = UDim2.new(1, -40, 1, -90)
+Pages.Position = UDim2.new(0, 20, 0, 80)
+Pages.Size = UDim2.new(1, -40, 1, -100)
 Pages.BackgroundTransparency = 1
 
 local function CreatePage(name)
@@ -54,28 +60,34 @@ local function CreatePage(name)
     Page.Size = UDim2.new(1, 0, 1, 0)
     Page.BackgroundTransparency = 1
     Page.Visible = false
-    Page.ScrollBarThickness = 2
-    Page.CanvasSize = UDim2.new(0,0,2,0)
+    Page.ScrollBarThickness = 3
+    Page.CanvasSize = UDim2.new(0, 0, 2, 0)
     
     local PageLayout = Instance.new("UIGridLayout", Page)
-    PageLayout.CellSize = UDim2.new(0, 170, 0, 45)
+    PageLayout.CellSize = UDim2.new(0, 175, 0, 45)
     PageLayout.CellPadding = UDim2.new(0, 15, 0, 15)
 
-    local TabBtn = Instance.new("TextButton", TabBar)
-    TabBtn.Size = UDim2.new(0, 90, 0, 30)
-    TabBtn.BackgroundTransparency = 1
+    -- Сама кнопка вкладки
+    local TabBtn = Instance.new("TextButton", TabButtonsContainer)
+    TabBtn.Size = UDim2.new(0, 100, 1, 0)
+    TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     TabBtn.Text = name
-    TabBtn.TextColor3 = Color3.fromRGB(150, 150, 150)
-    TabBtn.Font = Enum.Font.Gotham
+    TabBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    TabBtn.Font = Enum.Font.GothamMedium
     TabBtn.TextSize = 14
+    Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
 
     TabBtn.MouseButton1Click:Connect(function()
         for _, p in pairs(Pages:GetChildren()) do p.Visible = false end
-        for _, b in pairs(TabBar:GetChildren()) do 
-            if b:IsA("TextButton") then b.TextColor3 = Color3.fromRGB(150, 150, 150) end 
+        for _, b in pairs(TabButtonsContainer:GetChildren()) do 
+            if b:IsA("TextButton") then 
+                b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                b.TextColor3 = Color3.fromRGB(200, 200, 200)
+            end 
         end
         Page.Visible = true
-        TabBtn.TextColor3 = Color3.fromRGB(0, 170, 255)
+        TabBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+        TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     end)
 
     return Page
@@ -85,14 +97,13 @@ end
 local CombatPage = CreatePage("Combat")
 local VisualsPage = CreatePage("Visuals")
 local MiscPage = CreatePage("Misc")
-CombatPage.Visible = true
 
--- Функция добавления модуля
+-- Функция добавления модуля (кнопки внутри страниц)
 local function AddModule(parent, name, callback)
     local Btn = Instance.new("TextButton", parent)
     Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     Btn.Text = name
-    Btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
     Btn.Font = Enum.Font.Gotham
     Btn.TextSize = 14
     Instance.new("UICorner", Btn)
@@ -106,12 +117,12 @@ local function AddModule(parent, name, callback)
             Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
         else
             Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-            Btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+            Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
         end
     end)
 end
 
--- Наполняем модулями
+-- Наполнение (Сначала создаем кнопки, потом открываем первую страницу)
 AddModule(CombatPage, "Silent Aim", function(v) _G.HikswareSettings.SilentAim = v end)
 AddModule(CombatPage, "Trigger Bot", function(v) print("Trigger:", v) end)
 
@@ -119,8 +130,14 @@ AddModule(VisualsPage, "Box ESP", function(v) _G.HikswareSettings.ESP = v end)
 AddModule(VisualsPage, "Tracers", function(v) print("Tracers:", v) end)
 
 AddModule(MiscPage, "Speed Hack", function(v) 
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v and 50 or 16 
+    local char = game.Players.LocalPlayer.Character
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.WalkSpeed = v and 50 or 16 
+    end
 end)
+
+-- Открываем первую страницу по умолчанию
+CombatPage.Visible = true
 
 -- Драг (перетаскивание)
 local dragging, dragInput, dragStart, startPos
