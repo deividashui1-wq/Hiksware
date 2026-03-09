@@ -2,57 +2,53 @@ local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
-if CoreGui:FindFirstChild("Hiksware_V2") then CoreGui.Hiksware_V2:Destroy() end
+if CoreGui:FindFirstChild("Hiksware_Ultra") then CoreGui.Hiksware_Ultra:Destroy() end
 
 local Screen = Instance.new("ScreenGui", CoreGui)
-Screen.Name = "Hiksware_V2"
+Screen.Name = "Hiksware_Ultra"
 
--- Настройки (чтобы не было ошибок при клике)
-_G.HikswareSettings = _G.HikswareSettings or {
-    SilentAim = false,
-    ESP = false
-}
+_G.HikswareSettings = _G.HikswareSettings or { SilentAim = false, ESP = false }
 
--- Главное окно
+-- ГЛАВНОЕ ОКНО (Широкое - 800px)
 local Main = Instance.new("Frame", Screen)
-Main.Size = UDim2.new(0, 600, 0, 450)
-Main.Position = UDim2.new(0.5, -300, 0.5, -225)
-Main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Main.Size = UDim2.new(0, 800, 0, 500)
+Main.Position = UDim2.new(0.5, -400, 0.5, -250)
+Main.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
 Main.BorderSizePixel = 0
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 8)
 
--- Верхняя панель (Header)
+-- ВЕРХНЯЯ ПАНЕЛЬ
 local Header = Instance.new("Frame", Main)
-Header.Size = UDim2.new(1, 0, 0, 60)
-Header.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Header.Size = UDim2.new(1, 0, 0, 65)
+Header.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
 Header.BorderSizePixel = 0
-local HeaderCorner = Instance.new("UICorner", Header)
+Instance.new("UICorner", Header)
 
 local Title = Instance.new("TextLabel", Header)
 Title.Text = "HIKSWARE"
-Title.Position = UDim2.new(0, 20, 0, 0)
-Title.Size = UDim2.new(0, 120, 1, 0)
+Title.Position = UDim2.new(0, 25, 0, 0)
+Title.Size = UDim2.new(0, 130, 1, 0)
 Title.TextColor3 = Color3.fromRGB(0, 170, 255)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 22
+Title.TextSize = 24
 Title.BackgroundTransparency = 1
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- КНОПКИ ВКЛАДОК (Теперь они будут видны!)
-local TabButtonsContainer = Instance.new("Frame", Header)
-TabButtonsContainer.Position = UDim2.new(0, 160, 0, 10)
-TabButtonsContainer.Size = UDim2.new(1, -170, 0, 40)
-TabButtonsContainer.BackgroundTransparency = 1
+-- КОНТЕЙНЕР ДЛЯ ВСЕХ 7 ВКЛАДОК
+local TabContainer = Instance.new("Frame", Header)
+TabContainer.Position = UDim2.new(0, 170, 0, 10)
+TabContainer.Size = UDim2.new(1, -190, 0, 45)
+TabContainer.BackgroundTransparency = 1
 
-local TabLayout = Instance.new("UIListLayout", TabButtonsContainer)
+local TabLayout = Instance.new("UIListLayout", TabContainer)
 TabLayout.FillDirection = Enum.FillDirection.Horizontal
-TabLayout.Padding = UDim.new(0, 10)
+TabLayout.Padding = UDim.new(0, 6)
 TabLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
--- Контейнер для страниц
+-- КОНТЕЙНЕР ДЛЯ СТРАНИЦ
 local Pages = Instance.new("Frame", Main)
-Pages.Position = UDim2.new(0, 20, 0, 80)
-Pages.Size = UDim2.new(1, -40, 1, -100)
+Pages.Position = UDim2.new(0, 20, 0, 85)
+Pages.Size = UDim2.new(1, -40, 1, -105)
 Pages.BackgroundTransparency = 1
 
 local function CreatePage(name)
@@ -60,29 +56,28 @@ local function CreatePage(name)
     Page.Size = UDim2.new(1, 0, 1, 0)
     Page.BackgroundTransparency = 1
     Page.Visible = false
-    Page.ScrollBarThickness = 3
+    Page.ScrollBarThickness = 2
     Page.CanvasSize = UDim2.new(0, 0, 2, 0)
     
     local PageLayout = Instance.new("UIGridLayout", Page)
-    PageLayout.CellSize = UDim2.new(0, 175, 0, 45)
-    PageLayout.CellPadding = UDim2.new(0, 15, 0, 15)
+    PageLayout.CellSize = UDim2.new(0, 180, 0, 45)
+    PageLayout.CellPadding = UDim2.new(0, 12, 0, 12)
 
-    -- Сама кнопка вкладки
-    local TabBtn = Instance.new("TextButton", TabButtonsContainer)
-    TabBtn.Size = UDim2.new(0, 100, 1, 0)
-    TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    local TabBtn = Instance.new("TextButton", TabContainer)
+    TabBtn.Size = UDim2.new(0, 85, 1, 0)
+    TabBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     TabBtn.Text = name
-    TabBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    TabBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
     TabBtn.Font = Enum.Font.GothamMedium
-    TabBtn.TextSize = 14
-    Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
+    TabBtn.TextSize = 13
+    Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 4)
 
     TabBtn.MouseButton1Click:Connect(function()
         for _, p in pairs(Pages:GetChildren()) do p.Visible = false end
-        for _, b in pairs(TabButtonsContainer:GetChildren()) do 
+        for _, b in pairs(TabContainer:GetChildren()) do 
             if b:IsA("TextButton") then 
-                b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-                b.TextColor3 = Color3.fromRGB(200, 200, 200)
+                b.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                b.TextColor3 = Color3.fromRGB(180, 180, 180)
             end 
         end
         Page.Visible = true
@@ -93,15 +88,18 @@ local function CreatePage(name)
     return Page
 end
 
--- Создаем страницы
-local CombatPage = CreatePage("Combat")
-local VisualsPage = CreatePage("Visuals")
-local MiscPage = CreatePage("Misc")
+-- СОЗДАЕМ ВСЕ СЕКЦИИ
+local Combat = CreatePage("Combat")
+local ESPPage = CreatePage("ESP")
+local Visuals = CreatePage("Visuals")
+local Misc = CreatePage("Misc")
+local Configs = CreatePage("Config")
+local Settings = CreatePage("Settings")
+local Binds = CreatePage("Binds")
 
--- Функция добавления модуля (кнопки внутри страниц)
 local function AddModule(parent, name, callback)
     local Btn = Instance.new("TextButton", parent)
-    Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    Btn.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
     Btn.Text = name
     Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
     Btn.Font = Enum.Font.Gotham
@@ -112,34 +110,22 @@ local function AddModule(parent, name, callback)
     Btn.MouseButton1Click:Connect(function()
         enabled = not enabled
         callback(enabled)
-        if enabled then
-            Btn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-            Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        else
-            Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-            Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
-        end
+        Btn.BackgroundColor3 = enabled and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(22, 22, 22)
+        Btn.TextColor3 = enabled and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 180, 180)
     end)
 end
 
--- Наполнение (Сначала создаем кнопки, потом открываем первую страницу)
-AddModule(CombatPage, "Silent Aim", function(v) _G.HikswareSettings.SilentAim = v end)
-AddModule(CombatPage, "Trigger Bot", function(v) print("Trigger:", v) end)
-
-AddModule(VisualsPage, "Box ESP", function(v) _G.HikswareSettings.ESP = v end)
-AddModule(VisualsPage, "Tracers", function(v) print("Tracers:", v) end)
-
-AddModule(MiscPage, "Speed Hack", function(v) 
-    local char = game.Players.LocalPlayer.Character
-    if char and char:FindFirstChild("Humanoid") then
-        char.Humanoid.WalkSpeed = v and 50 or 16 
-    end
+-- НАПОЛНЕНИЕ (ПРИМЕРЫ)
+AddModule(Combat, "Silent Aim", function(v) _G.HikswareSettings.SilentAim = v end)
+AddModule(ESPPage, "Box ESP", function(v) _G.HikswareSettings.ESP = v end)
+AddModule(Misc, "Speed Hack", function(v) 
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v and 50 or 16 
 end)
 
--- Открываем первую страницу по умолчанию
-CombatPage.Visible = true
+-- ОТКРЫВАЕМ ПЕРВУЮ ВКЛАДКУ
+Combat.Visible = true
 
--- Драг (перетаскивание)
+-- ДРАГ
 local dragging, dragInput, dragStart, startPos
 Main.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -156,4 +142,9 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 UserInputService.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+end)
+
+-- СКРЫТИЕ НА INSERT
+UserInputService.InputBegan:Connect(function(i)
+    if i.KeyCode == Enum.KeyCode.Insert then Main.Visible = not Main.Visible end
 end)
