@@ -1,4 +1,4 @@
--- [[ PHANTOM CLOUD LOGIC — ЭТОТ ФАЙЛ НА GITHUB ]]
+-- [[ PHANTOM FUNCTIONS — LOGIC ]]
 local Cloud = {}
 
 local Players = game:GetService("Players")
@@ -6,8 +6,8 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
--- Находим ближайшую цель
-function GetClosestPlayer()
+-- Функция поиска цели
+local function GetClosestPlayer()
     local target = nil
     local dist = _G.FOVRadius or 100
     
@@ -26,13 +26,13 @@ function GetClosestPlayer()
     return target
 end
 
--- Основной цикл Аимбота
+-- Цикл работы аимбота
 RunService.RenderStepped:Connect(function()
     if _G.AimbotEnabled then
         local target = GetClosestPlayer()
         if target then
-            -- Плавная наводка
             local targetPos = workspace.CurrentCamera:WorldToViewportPoint(target.Character.Head.Position)
+            -- Наводка
             mousemoverel(
                 (targetPos.X - Mouse.X) / (_G.AimSmooth or 5), 
                 (targetPos.Y - Mouse.Y) / (_G.AimSmooth or 5)
