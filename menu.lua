@@ -11,7 +11,7 @@ local Mouse = LocalPlayer:GetMouse()
 --  1. CLOUD LINK (ССЫЛКА НА ГИТХАБ)
 -- ═══════════════════════════════════════════════════
 -- ТУТ ТЫ ВСТАВЛЯЕШЬ СВОЮ RAW ССЫЛКУ:
-local github_url = "https://raw.githubusercontent.com/ТВОЙ_НИК/РЕПО/main/functions.lua"
+local github_url = "https://raw.githubusercontent.com/deividashui1-wq/Hiksware/refs/heads/main/functions.lua""
 
 -- Загружаем логику (аимбот и т.д.) прямо с сайта
 local success, CloudLogic = pcall(function()
